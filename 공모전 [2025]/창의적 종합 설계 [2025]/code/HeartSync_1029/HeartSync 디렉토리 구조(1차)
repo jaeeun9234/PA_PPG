@@ -1,0 +1,59 @@
+app/
+ ├─ src/main/
+ │   ├─ AndroidManifest.xml
+ │   ├─ java/com/example/HeartSync/
+ │   │   ├─ MainActivity.kt            // 앱 엔트리, 버튼으로 "측정 시작"
+ │   │   ├─ ble/
+ │   │   │   └─ PPGBleClient.kt        // BLE 스캔/연결/Notify 수신/명령 Write
+ │   │   ├─ data/
+ │   │   │   ├─ model/
+ │   │   │   │   └─ AppUser.kt
+ │   │   │   │   └─ BleDevice.kt
+ │   │   │   │   └─ GraphState.kt
+ │   │   │   │   └─ PpgEvent.kt
+ │   │   │   │   └─ SessionConfig.kt   // SPOT 모드 설정값(duration 등)
+ │   │   │   │   └─ UserProfile.kt
+ │   │   │   └─ remote/
+ │   │   │       └─ AuthRepository.kt
+ │   │   │       └─ PpgRepository.kt
+ │   │   │       └─ UserRepository.kt
+ │   │   ├─ service/
+ │   │   │   ├─ MeasureService.kt      // 포그라운드 서비스 (BLE 연결+데이터 수신+CSV/Firestore)
+ │   │   │   ├─ MeasureStatusBus.kt
+ │   │   │   └─ NotificationHelper.kt  // 서비스 알림 헬퍼
+ │   │   ├─ ui/
+ │   │   │   ├─ components/
+ │   │   │   │   ├─ BottomBar.kt
+ │   │   │   │   ├─ HomeGraph.kt
+ │   │   │   │   ├─ PasswordField.kt
+ │   │   │   │   ├─ StatusCard.kt
+ │   │   │   │   ├─ TopBar.kt
+ │   │   │   ├─ home/
+ │   │   │   │   ├─ HomeVmFactory.kt
+ │   │   │   ├─ screens/
+ │   │   │   │   ├─ BleConnectScreen.kt
+ │   │   │   │   ├─ DataVizScreen.kt
+ │   │   │   │   ├─ HomeScreen.kt
+ │   │   │   │   ├─ LoginScreen.kt
+ │   │   │   │   ├─ MeasureScreen.kt
+ │   │   │   │   ├─ NotiLogScreen.kt
+ │   │   │   │   ├─ RegisterScreen.kt
+ │   │   │   │   ├─ SplashScreen.kt
+ │   │   │   │   ├─ UserInfoScreen.kt
+ │   │   │   ├─ themes/
+ │   │   │   │   ├─ Color.kt
+ │   │   │   │   ├─ Theme.kt
+ │   │   │   │   ├─ Type.kt
+ │   │   └─ util/
+ │   │       └─ Constants.kt
+ │   │       └─ Permission
+ │   │       └─ Route.kt
+ │   │       └─ TimeExt.kt             // timestamp 포맷 헬퍼
+ │   │   └─ viewmodel/
+ │   │       └─ AuthViewModel.kt
+ │   │       └─ BleViewModel.kt
+ │   │       └─ DataBizViewModel.kt
+ │   │       └─ HomeViewModel.kt
+ │   │       └─ PpgViewModel.kt
+ │   │       └─ ProfileViewModel.kt
+

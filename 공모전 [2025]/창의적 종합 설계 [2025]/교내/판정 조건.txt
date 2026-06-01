@@ -1,0 +1,21 @@
+판정 조건
+1. AmpRatio <= 0.7
+2. |dSUT| >= 150
+3. |PAD| >=25
+(PQI_MIN = 40)
+- 모순점
+1. dSUT 정의 = |SUT_R - SUT_L|
+   실제 dSUT_ms : 음수값 받아짐
+=> 아두이노 코드 : dSUT = SUT_R - SUT_L
+2. PAD 정의 = |FOOT_R - FOOT_L|
+   실제 PAD : 음수값 받아짐
+=> 아두이노 코드 : PAD_ms = FOOT_R - FOOT_L
+3. reasons에 "ongoing"이 받아짐
+4. side가 "uncertain"인데 event가 "ALERT"로 받아짐.
+[S_20250923_141209_dc334c]
+   + AmpRatio가 0.79인데 reasons에 "AmpRatio low"로 
+   + dSUT_ms가 61인데 "delta SUT high"로 받아짐.
+-----------------------------------------------------------------
+   + dSUT_ms가 -30인데 "delta SUT high"로 받아짐.
+   + PAD_ms가 0인데 "PAD high"로 받아짐
+

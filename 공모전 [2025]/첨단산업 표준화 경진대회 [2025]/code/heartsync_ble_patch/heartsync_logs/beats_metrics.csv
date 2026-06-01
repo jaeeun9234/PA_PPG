@@ -1,0 +1,1 @@
+wall_time,elapsed_s,marker,beat_id,footL_idx,peakL_idx,footR_idx,peakR_idx,RT_L_ms,RT_R_ms,DeltaRT_ms,AUSP_L,AUSP_R,AUSPR,DeltaTD_ms,HSI,risk

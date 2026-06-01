@@ -1,0 +1,288 @@
+// <지연이의 코드>
+/*
+ * HeartSync Standalone (ESP32, Arduino IDE) - v1.3
+ * - Dual PPG on ESP32: AmpRatio, PAD, dSUT + side inference
+ * - "balanced" 추가: 정상 시 side=balanced
+ * - NEW: 전처리 후 파형 샘플을 PPGf_L, PPGf_R 로 STAT/ALERT에 포함
+ * - BLE Notify & Serial(115200)
+ */
+
+#include <Arduino.h>
+#include <BLEDevice.h>
+#include <BLEUtils.h>
+#include <BLEServer.h>
+#include <BLE2902.h>
+
+#define SERVICE_UUID     "5ba7a52c-c3fe-46eb-8ade-0dacbd466278"
+#define CHAR_STREAM_UUID "5dde726d-4cf3-4e2f-ab24-323caa359b78"
+
+BLEServer*         g_server   = nullptr;
+BLEService*        g_service  = nullptr;
+BLECharacteristic* g_stream   = nullptr;
+bool g_centralConnected = false;
+
+class ServerCallbacks : public BLEServerCallbacks {
+  void onConnect(BLEServer* pServer) override { g_centralConnected = true; }
+  void onDisconnect(BLEServer* pServer) override {
+    g_centralConnected = false;
+    BLEDevice::startAdvertising();
+  }
+};
+
+// ==== Pins / Sampling ====
+const int PIN_L = 32;  // left
+const int PIN_R = 33;  // right
+
+const int FS_HZ   = 100;
+const int delayMs = 1000 / FS_HZ;
+
+// ==== Windows / thresholds ====
+const int DC_WIN      = 20;
+const int SMOOTH_WIN  = 5;
+const int AMP_WIN_SEC = 2;
+const int AMP_WIN     = AMP_WIN_SEC * FS_HZ;
+
+float AMP_RATIO_THR = 0.70f;
+int   PAD_THR_MS    = 25;
+int   DSUT_THR_MS   = 150;
+unsigned long PERSIST_MS = 60000;  #added
+uint8_t PQI_MIN = 40;
+
+struct PPGSensor {
+  int pin;
+  int   dcBuf[DC_WIN];
+  int   dcIdx = 0;
+  float smoothBuf[SMOOTH_WIN];
+  int   smoothIdx = 0;
+  float waveBuf[AMP_WIN];
+  int   waveIdx = 0;
+  bool  waveFilled = false;
+  float peakBuf[10];
+  int   peakIdx = 0;
+  bool  isPeak = false;
+  unsigned long lastPeakTime = 0;
+  unsigned long overThStart = 0;
+  float bpm = 0;
+  float lastSmoothed = 0;
+  int   lastRaw = 0;
+  unsigned long lastFoot = 0;
+  unsigned long lastSUT  = 0;
+  float lastVal = 0;
+  bool  inUp = false;
+  float minVal = 1e9;
+  unsigned long minAt = 0;
+};
+
+PPGSensor L, R;
+
+uint8_t calcPQI(float smoothed, int raw) {
+  int clip = (raw < 50 || raw > 4045) ? 40 : 0;
+  int low  = (fabsf(smoothed) < 3.0f) ? 30 : 0;
+  int score = 100 - (clip + low);
+  if (score < 0) score = 0; if (score > 100) score = 100;
+  return (uint8_t)score;
+}
+
+float movAvg(float* buf, int win) { float s=0; for(int i=0;i<win;i++) s+=buf[i]; return s/(float)win; }
+
+float processOne(PPGSensor &S, int raw) {
+  S.lastRaw = raw;
+  // DC removal
+  S.dcBuf[S.dcIdx] = raw; S.dcIdx = (S.dcIdx + 1) % DC_WIN;
+  int sum = 0; for (int i=0;i<DC_WIN;i++) sum += S.dcBuf[i];
+  float mean = sum / (float)DC_WIN;
+  float ac = raw - mean;
+  // smoothing
+  S.smoothBuf[S.smoothIdx] = ac; S.smoothIdx = (S.smoothIdx + 1) % SMOOTH_WIN;
+  float sm = movAvg(S.smoothBuf, SMOOTH_WIN);
+  S.lastSmoothed = sm;
+  // ring buffer for amplitude
+  S.waveBuf[S.waveIdx] = sm; S.waveIdx = (S.waveIdx + 1) % AMP_WIN;
+  if (S.waveIdx == 0) S.waveFilled = true;
+  return sm;
+}
+
+bool detectPeak(PPGSensor &S, float sm, unsigned long now) {
+  const int minInterval = 333;
+  const int holdMs = 30;
+  S.peakBuf[S.peakIdx] = sm; S.peakIdx = (S.peakIdx + 1) % 10;
+  float ps=0; for(int i=0;i<10;i++) ps += S.peakBuf[i];
+  float dynTh = ps/10.0f + 60.0f;
+  if (!S.isPeak) {
+    if (sm > dynTh) {
+      if (S.overThStart == 0) S.overThStart = now;
+      if ((now - S.overThStart) > (unsigned)holdMs && (now - S.lastPeakTime) > (unsigned)minInterval) {
+        S.isPeak = true;
+        if (S.lastPeakTime > 0) {
+          float ibi = (now - S.lastPeakTime) / 1000.0f;
+          float bpmNow = (ibi > 0) ? (60.0f / ibi) : 0;
+          if (bpmNow > 30 && bpmNow < 180) S.bpm = 0.6f*S.bpm + 0.4f*bpmNow;
+        }
+        S.lastPeakTime = now;
+        return true;
+      }
+    } else {
+      S.overThStart = 0;
+    }
+  } else if (sm < dynTh) {
+    S.isPeak = false;
+    S.overThStart = 0;
+  }
+  return false;
+}
+
+bool updateFoot(PPGSensor &S, float x, unsigned long now) {
+  bool foot = false;
+  if (x < S.minVal) { S.minVal = x; S.minAt = now; }
+  bool up = (x > S.lastVal);
+  if (!S.inUp && up) {
+    S.lastFoot = now; foot = true;
+    S.minVal = 1e9; S.minAt = now;
+  }
+  S.inUp = up; S.lastVal = x;
+  return foot;
+}
+
+float amplitudeInWindow(const PPGSensor &S) {
+  int N = S.waveFilled ? AMP_WIN : S.waveIdx;
+  if (N < 8) return 0;
+  float mn=1e9, mx=-1e9;
+  for (int i=0;i<N;i++) { 
+  float v=S.waveBuf[i]; 
+  if(v<mn) mn=v; 
+  if(v>mx) mx=v; 
+  }
+  float amp = mx - mn;
+  return (amp > 0) ? amp : 0;
+}
+
+unsigned long lastStatSent = 0;
+unsigned long persistLowAmp = 0, persistPAD = 0, persistDSUT = 0;
+
+void sendLine(const String &msg) {
+  Serial.println(msg);
+  if (g_centralConnected) {
+    g_stream->setValue((uint8_t*)msg.c_str(), msg.length());
+    g_stream->notify();
+  }
+}
+
+void setup() {
+  Serial.begin(115200);
+  memset(&L, 0, sizeof(L)); L.pin = PIN_L;
+  memset(&R, 0, sizeof(R)); R.pin = PIN_R;
+  for (int i=0;i<DC_WIN;i++){ L.dcBuf[i]=0; R.dcBuf[i]=0; }
+  for (int i=0;i<SMOOTH_WIN;i++){ L.smoothBuf[i]=0; R.smoothBuf[i]=0; }
+  for (int i=0;i<10;i++){ L.peakBuf[i]=0; R.peakBuf[i]=0; }
+
+  BLEDevice::init("HeartSync");
+  g_server = BLEDevice::createServer();
+  g_server->setCallbacks(new ServerCallbacks());
+  g_service = g_server->createService(SERVICE_UUID);
+  g_stream  = g_service->createCharacteristic(CHAR_STREAM_UUID, BLECharacteristic::PROPERTY_NOTIFY);
+  g_stream->addDescriptor(new BLE2902());
+  g_service->start();
+
+  BLEAdvertising* adv = BLEDevice::getAdvertising();
+  BLEAdvertisementData advData; advData.setName("HeartSync"); advData.setCompleteServices(BLEUUID(SERVICE_UUID));
+  adv->setAdvertisementData(advData);
+  BLEAdvertisementData scanData; scanData.setName("HeartSync"); adv->setScanResponseData(scanData);
+  adv->setScanResponse(true);
+  BLEDevice::startAdvertising();
+}
+
+void loop() {
+  unsigned long now = millis();
+
+  int rawL = analogRead(L.pin);
+  int rawR = analogRead(R.pin);
+
+  float smL = processOne(L, rawL);
+  float smR = processOne(R, rawR);
+
+  bool peakL = detectPeak(L, smL, now);
+  bool peakR = detectPeak(R, smR, now);
+
+  bool footL = updateFoot(L, smL, now);
+  bool footR = updateFoot(R, smR, now);
+
+  if (peakL && L.lastFoot > 0 && L.lastFoot <= L.lastPeakTime) L.lastSUT = L.lastPeakTime - L.lastFoot;
+  if (peakR && R.lastFoot > 0 && R.lastFoot <= R.lastPeakTime) R.lastSUT = R.lastPeakTime - R.lastFoot;
+
+  long PAD_ms = 0;
+  if (L.lastFoot > 0 && R.lastFoot > 0) PAD_ms = (long)R.lastFoot - (long)L.lastFoot;
+
+  uint8_t pqiL = calcPQI(smL, L.lastRaw);
+  uint8_t pqiR = calcPQI(smR, R.lastRaw);
+  bool pqiOK = (pqiL >= PQI_MIN) && (pqiR >= PQI_MIN);
+
+  float ampL = amplitudeInWindow(L);
+  float ampR = amplitudeInWindow(R);
+  float ampRatio = 1.0f;
+  if (ampL > 1e-3f && ampR > 1e-3f) ampRatio = (ampL < ampR) ? (ampL/ampR) : (ampR/ampL);
+
+  long dSUT = (long)R.lastSUT - (long)L.lastSUT;
+
+  // ===== Side inference + balanced =====
+  const float AMP_SIDE_FACTOR = 0.8f;
+  int scoreL = 0, scoreR = 0;
+  if (ampR <= AMP_SIDE_FACTOR * ampL) scoreR++;
+  if (ampL <= AMP_SIDE_FACTOR * ampR) scoreL++;
+  if (PAD_ms >= PAD_THR_MS) scoreR++; else if (PAD_ms <= -PAD_THR_MS) scoreL++;
+  if (dSUT   >= DSUT_THR_MS) scoreR++; else if (dSUT   <= -DSUT_THR_MS) scoreL++;
+
+  bool balanced = pqiOK &&
+                  (ampRatio > AMP_RATIO_THR) &&
+                  (abs(PAD_ms) < PAD_THR_MS) &&
+                  (abs(dSUT)   < DSUT_THR_MS);
+
+  const char* side = "uncertain";
+  if (balanced) {
+    side = "balanced";
+  } else if (pqiOK) {
+    if (scoreR >= 2) side = "right";
+    else if (scoreL >= 2) side = "left";
+  }
+
+  // ===== persistence & alerts =====
+  if (pqiOK && ampL>0 && ampR>0 && !isnan(ampRatio)) {
+    if (ampRatio <= AMP_RATIO_THR) persistLowAmp += delayMs; else persistLowAmp = 0;
+    if (abs(PAD_ms) >= PAD_THR_MS) persistPAD    += delayMs; else persistPAD    = 0;
+    if (abs(dSUT)   >= DSUT_THR_MS) persistDSUT  += delayMs; else persistDSUT   = 0;
+  } else {
+    persistLowAmp = persistPAD = persistDSUT = 0;
+  }
+
+  bool triggered = (persistLowAmp >= PERSIST_MS) || (persistPAD >= PERSIST_MS) || (persistDSUT >= PERSIST_MS);
+
+  static unsigned long lastAlertAt = 0;
+  if (triggered && (now - lastAlertAt > 3000)) {
+    String reasons = "";
+    if (persistLowAmp >= PERSIST_MS) reasons += (reasons.length()? ", ":"") + String("AmpRatio low");
+    if (persistPAD    >= PERSIST_MS) reasons += (reasons.length()? ", ":"") + String("PAD high");
+    if (persistDSUT   >= PERSIST_MS) reasons += (reasons.length()? ", ":"") + String("ΔSUT high");
+    char msg[320];
+    snprintf(msg, sizeof(msg),
+      "ALERT ts=%lu side=%s type=%s reasons=%s AmpRatio=%.2f PAD=%ld dSUT=%ld "
+      "PPGf_L=%.2f PPGf_R=%.2f ampL=%.1f ampR=%.1f SUTL=%lu SUTR=%lu BPM_L=%.1f BPM_R=%.1f PQIL=%u PQIR=%u",
+      now, side, "asymmetry", reasons.c_str(), ampRatio, PAD_ms, dSUT,
+      smL, smR, ampL, ampR, L.lastSUT, R.lastSUT, L.bpm, R.bpm, pqiL, pqiR
+    );
+    sendLine(String(msg));
+    lastAlertAt = now;
+  }
+
+  if (now - lastStatSent >= 100) {
+    lastStatSent = now;
+    char stat[320];
+    snprintf(stat, sizeof(stat),
+      "STAT ts=%lu side=%s AmpRatio=%.2f PAD=%ld dSUT=%ld "
+      "PPGf_L=%.2f PPGf_R=%.2f ampL=%.1f ampR=%.1f SUTL=%lu SUTR=%lu BPM_L=%.1f BPM_R=%.1f PQIL=%u PQIR=%u",
+      now, side, ampRatio, PAD_ms, dSUT,
+      smL, smR, ampL, ampR, L.lastSUT, R.lastSUT, L.bpm, R.bpm, pqiL, pqiR
+    );
+    sendLine(String(stat));
+  }
+
+  delay(delayMs);
+}

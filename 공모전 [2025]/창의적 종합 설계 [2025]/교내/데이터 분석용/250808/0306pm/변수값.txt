@@ -1,0 +1,11 @@
+windowSize = 100
+
+thresholdOffset = 60
+
+MIN_PROMINENCE = 40
+
+MIN_WIDTH_SAMPLES = 6
+
+COINC_WINDOW_MS = 120
+
+delayMs = 10
