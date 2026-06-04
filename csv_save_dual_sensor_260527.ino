@@ -7,10 +7,13 @@ MAX30105 sensor1;
 MAX30105 sensor2;
 
 // ===== Sampling =====
-const int sampleRate = 100; 
+const int sampleRate = 200; 
 const unsigned long interval_ms = 1000UL / sampleRate;
 const uint32_t LOOP_INTERVAL_US = interval_ms * 1000UL;
 unsigned long lastTime = 0;
+
+int avail1 = 0;
+int avail2 = 0;
 
 // ===== DC / SpO2 parameters =====
 const float alpha_dc = 0.002f;
@@ -213,7 +216,7 @@ void setup() {
   tcaSelect(2);
   sensor2.setup(0x3F, 4, 2, sampleRate, 411, 16384);
 
-  Serial.println("t1_us t2_us red_raw1 ir_raw1 red_raw2 ir_raw2 spo2_1 spo2_2 spo2_valid1 spo2_valid2");
+  Serial.println("t1_us t2_us avail1 avail2 red_raw1 ir_raw1 red_raw2 ir_raw2 spo2_1 spo2_2 spo2_valid1 spo2_valid2");
 
   lastTime = millis();
 }
@@ -243,11 +246,19 @@ void loop() {
   // ===== Sensor data read =====
   tcaSelect(1);
   uint32_t t1_us = micros();
+
+  sensor1.check();
+  avail1 = sensor1.available();
+
   long red_raw1 = sensor1.getRed();
   long ir_raw1 = sensor1.getIR();
 
   tcaSelect(2);
   uint32_t t2_us = micros();
+  
+  sensor2.check();
+  avail2 = sensor2.available();
+
   long red_raw2 = sensor2.getRed();
   long ir_raw2 = sensor2.getIR();
 
@@ -260,6 +271,11 @@ void loop() {
   Serial.print(t1_us);
   Serial.print(" ");
   Serial.print(t2_us);
+  Serial.print(" ");
+
+  Serial.print(avail1);
+  Serial.print(" ");
+  Serial.print(avail2);
   Serial.print(" ");
 
   Serial.print(red_raw1);
