@@ -1,0 +1,2 @@
+data_20260506_1641 : recovery 시작 후 뒷부분 레이저 off로 인해 recovery 끝나기 6초 전에 끝남.
+=> timeline 맞추기 (trial 2개)

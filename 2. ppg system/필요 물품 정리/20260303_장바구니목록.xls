@@ -1,0 +1,181 @@
+
+		<html xmlns:v='urn:schemas-microsoft-com:vml' xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:excel' xmlns='http://www.w3.org/TR/REC-html40'>
+		<head></head>
+		
+		<meta http-equiv="Content-Type" content="application/vnd.ms-excel;charset=utf-8">
+		<style>
+		<!--table
+			{mso-displayed-decimal-separator:"\.";
+			mso-displayed-thousand-separator:"\,";}
+		@page
+		{margin:1.0in .75in 1.0in .75in;
+		mso-header-margin:.5in;
+		mso-footer-margin:.5in;}
+		.number {mso-number-format:"@"}
+		*{
+			color:black;
+			font-family:돋움, monospace;
+			font-size:10.0pt;
+		}
+		td  {mso-number-format:\@;}
+		-->
+		</style>
+		
+				<table width='100%' border='1' bordercolor='#dedede' cellpadding='0' cellspacing='0'>
+				<thead>
+				<tr align='center'>
+					<td style='background:#FFCC99;font-size:9pt' nowrap>번호</td>
+					<td style='background:#FFCC99;font-size:9pt' nowrap>상품코드</td>
+					<td style='background:#FFCC99;font-size:9pt' nowrap>상품명(옵션명)</td>
+					<td style='background:#FFCC99;font-size:9pt' nowrap>제조사</td>
+					<td style='background:#FFCC99;font-size:9pt' nowrap>링크</td>
+					<td style='background:#FFCC99;font-size:9pt' nowrap>수량</td>
+					<td style='background:#FFCC99;font-size:9pt' nowrap>단가</td>
+					<td style='background:#FFCC99;font-size:9pt' nowrap>합계금액</td>
+				</tr>
+		</thead>
+		
+		<tbody>
+
+		
+					<tr>
+
+						<td style='font-size:9pt;text-align:center;width:50px' nowrap>1</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>13137639</td>
+						<td style='font-size:9pt;text-align:left;width:400px' nowrap>MAX30102 산소포화도, 심박 센서 모듈 (블랙) [SZH-JA057]</td>
+						<td style='font-size:9pt;text-align:left;width:160px' nowrap>SMG</td>
+						<td style='font-size:9pt;text-align:center;width:350px' nowrap>http://www.devicemart.co.kr/goods/view?no=13137639</td>
+						
+						<td style='font-size:9pt;text-align:center;width:50px' nowrap>2</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>1,700</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>3,400</td>
+						</tr>
+
+				
+					<tr>
+
+						<td style='font-size:9pt;text-align:center;width:50px' nowrap>2</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>1274090</td>
+						<td style='font-size:9pt;text-align:left;width:400px' nowrap>TCA9548A I2C Multiplexer [ada-2717]</td>
+						<td style='font-size:9pt;text-align:left;width:160px' nowrap>Adafruit</td>
+						<td style='font-size:9pt;text-align:center;width:350px' nowrap>http://www.devicemart.co.kr/goods/view?no=1274090</td>
+						
+						<td style='font-size:9pt;text-align:center;width:50px' nowrap>1</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>11,300</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>11,300</td>
+						</tr>
+
+				
+					<tr>
+
+						<td style='font-size:9pt;text-align:center;width:50px' nowrap>3</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>15314103</td>
+						<td style='font-size:9pt;text-align:left;width:400px' nowrap>ESP32 DevKitC WROOM-32D V4  CH9102X 개발보드 [CMODULE-43]</td>
+						<td style='font-size:9pt;text-align:left;width:160px' nowrap>Happy House</td>
+						<td style='font-size:9pt;text-align:center;width:350px' nowrap>http://www.devicemart.co.kr/goods/view?no=15314103</td>
+						
+						<td style='font-size:9pt;text-align:center;width:50px' nowrap>1</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>7,000</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>7,000</td>
+						</tr>
+
+				
+					<tr>
+
+						<td style='font-size:9pt;text-align:center;width:50px' nowrap>4</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>1322408</td>
+						<td style='font-size:9pt;text-align:left;width:400px' nowrap>브레드보드 830핀 MB-102 [SZH-BBAD-002]</td>
+						<td style='font-size:9pt;text-align:left;width:160px' nowrap>SMG</td>
+						<td style='font-size:9pt;text-align:center;width:350px' nowrap>http://www.devicemart.co.kr/goods/view?no=1322408</td>
+						
+						<td style='font-size:9pt;text-align:center;width:50px' nowrap>1</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>1,400</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>1,400</td>
+						</tr>
+
+				
+					<tr>
+
+						<td style='font-size:9pt;text-align:center;width:50px' nowrap>5</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>1321195</td>
+						<td style='font-size:9pt;text-align:left;width:400px' nowrap>테스트[CH254] 소켓 점퍼 케이블 40P (칼라) (M/F) 20cm</td>
+						<td style='font-size:9pt;text-align:left;width:160px' nowrap>KEYES</td>
+						<td style='font-size:9pt;text-align:center;width:350px' nowrap>http://www.devicemart.co.kr/goods/view?no=1321195</td>
+						
+						<td style='font-size:9pt;text-align:center;width:50px' nowrap>1</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>850</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>850</td>
+						</tr>
+
+				
+					<tr>
+
+						<td style='font-size:9pt;text-align:center;width:50px' nowrap>6</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>1113722</td>
+						<td style='font-size:9pt;text-align:left;width:400px' nowrap>테스트[CH254]소켓 점퍼 케이블 40P (칼라) (M/M)</td>
+						<td style='font-size:9pt;text-align:left;width:160px' nowrap>KEYES</td>
+						<td style='font-size:9pt;text-align:center;width:350px' nowrap>http://www.devicemart.co.kr/goods/view?no=1113722</td>
+						
+						<td style='font-size:9pt;text-align:center;width:50px' nowrap>1</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>1,000</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>1,000</td>
+						</tr>
+
+				
+					<tr>
+
+						<td style='font-size:9pt;text-align:center;width:50px' nowrap>7</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>15315957</td>
+						<td style='font-size:9pt;text-align:left;width:400px' nowrap>ESP32 DevKitC V4 확장보드 터미널 쉴드 [CMODULE-47]</td>
+						<td style='font-size:9pt;text-align:left;width:160px' nowrap>Happy House</td>
+						<td style='font-size:9pt;text-align:center;width:350px' nowrap>http://www.devicemart.co.kr/goods/view?no=15315957</td>
+						
+						<td style='font-size:9pt;text-align:center;width:50px' nowrap>1</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>4,000</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>4,000</td>
+						</tr>
+
+				
+					<tr>
+
+						<td style='font-size:9pt;text-align:center;width:50px' nowrap>8</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>1318</td>
+						<td style='font-size:9pt;text-align:left;width:400px' nowrap>E/C 50V 10uF (85℃)</td>
+						<td style='font-size:9pt;text-align:left;width:160px' nowrap>SAMYOUNG</td>
+						<td style='font-size:9pt;text-align:center;width:350px' nowrap>http://www.devicemart.co.kr/goods/view?no=1318</td>
+						
+						<td style='font-size:9pt;text-align:center;width:50px' nowrap>10</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>30</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>300</td>
+						</tr>
+
+				
+					<tr>
+
+						<td style='font-size:9pt;text-align:center;width:50px' nowrap>9</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>30264</td>
+						<td style='font-size:9pt;text-align:left;width:400px' nowrap>MF 0.1uF/100VDC</td>
+						<td style='font-size:9pt;text-align:left;width:160px' nowrap>HDC</td>
+						<td style='font-size:9pt;text-align:center;width:350px' nowrap>http://www.devicemart.co.kr/goods/view?no=30264</td>
+						
+						<td style='font-size:9pt;text-align:center;width:50px' nowrap>10</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>28</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>280</td>
+						</tr>
+
+				
+					<tr>
+
+						<td style='font-size:9pt;text-align:center;width:50px' nowrap>10</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>1978</td>
+						<td style='font-size:9pt;text-align:left;width:400px' nowrap>1/4W 1% Axial Resistor 100F (10Ω)</td>
+						<td style='font-size:9pt;text-align:left;width:160px' nowrap>제일전자</td>
+						<td style='font-size:9pt;text-align:center;width:350px' nowrap>http://www.devicemart.co.kr/goods/view?no=1978</td>
+						
+						<td style='font-size:9pt;text-align:center;width:50px' nowrap>10</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>30</td>
+						<td style='font-size:9pt;text-align:center;width:100px' nowrap>300</td>
+						</tr>
+
+				</tbody>
+</table>

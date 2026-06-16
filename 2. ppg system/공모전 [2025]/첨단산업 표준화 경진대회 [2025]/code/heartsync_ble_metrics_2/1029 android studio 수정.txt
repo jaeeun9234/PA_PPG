@@ -1,0 +1,9 @@
+app/.../ppg/PpgProcessor.kt ← 지표 계산 핵심(여기에 대부분 반영) - ok
+
+app/.../viewmodel/AlertViewModel.kt ← HSI 5초 지속 팝업 - ok
+
+app/.../ble/PpgBleClient.kt ← BLE 노티 파싱→PpgProcessor.feed(...) 호출
+
+app/.../data/remote/PpgRepository.kt ← Map 그대로 저장
+
+(선택) 그래프/로그 화면: Map 키로 값 읽도록 변경

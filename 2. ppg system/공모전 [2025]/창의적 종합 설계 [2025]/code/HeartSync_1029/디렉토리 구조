@@ -1,0 +1,58 @@
+app/
+ ├─ build.gradle
+ ├─ src/main/
+ │   ├─ AndroidManifest.xml
+ │   ├─ java/com/example/HeartSync/
+ │   │   ├─ ui/
+ │   │   │   ├─ MainActivity.kt
+ │   │   │   ├─ screens/
+ │   │   │   │   ├─ HomeScreen.kt
+ │   │   │   │   ├─ SpotMeasureScreen.kt
+ │   │   │   │   └─ ContinuousMeasureScreen.kt
+ │   │   │   └─ components/
+ │   │   │       ├─ StatusCard.kt
+ │   │   │       └─ Charts.kt
+ │   │   ├─ service/
+ │   │   │   ├─ MeasureService.kt          // 포그라운드 서비스(세션 엔진)
+ │   │   │   ├─ NotificationHelper.kt      // 측정 중 알림 채널/알림
+ │   │   │   └─ receivers/
+ │   │   │       └─ MeasureAlarmReceiver.kt // 스팟 측정 알람 트리거
+ │   │   ├─ ble/
+ │   │   │   ├─ PpgBleClient.kt            // 스캔/연결/구독/쓰기
+ │   │   │   └─ BleParser.kt               // "csv 라인" 파싱/검증
+ │   │   ├─ data/
+ │   │   │   ├─ model/
+ │   │   │   │   ├─ SessionConfig.kt       // MeasureMode, 세션 설정
+ │   │   │   │   ├─ Sample.kt              // 수신 샘플 데이터 모델
+ │   │   │   │   └─ SessionMeta.kt
+ │   │   │   ├─ local/
+ │   │   │   │   ├─ CsvWriter.kt           // MediaStore 기반 CSV 기록
+ │   │   │   │   └─ cache/
+ │   │   │   │       ├─ AppDatabase.kt     // (옵션) Room
+ │   │   │   │       └─ SampleEntity.kt
+ │   │   │   ├─ remote/
+ │   │   │   │   ├─ FirestoreUploader.kt   // 배치 업로드/재시도 훅
+ │   │   │   │   └─ StorageUploader.kt     // CSV 파일 Storage 업로드
+ │   │   │   └─ repo/
+ │   │   │       └─ MeasureRepository.kt   // 로컬/원격 조합, 서비스가 사용
+ │   │   ├─ domain/
+ │   │   │   ├─ MotionFilter.kt            // 인터페이스
+ │   │   │   ├─ PpgOnlyMotionFilter.kt     // IQR/MAD/Prominence 기반
+ │   │   │   └─ ImuBasedMotionFilter.kt    // (옵션) IMU 있으면 교체
+ │   │   ├─ work/
+ │   │   │   └─ UploadWorker.kt            // 오프라인 큐 재전송
+ │   │   ├─ util/
+ │   │   │   ├─ TimeExt.kt                 // ISO8601 등
+ │   │   │   ├─ Permissions.kt             // 권한 요청 헬퍼
+ │   │   │   └─ Result.kt                  // 성공/에러 래퍼
+ │   │   └─ di/                            // (선택) Hilt 등 DI
+ │   │       └─ AppModule.kt
+ │   └─ res/
+ │       ├─ layout/ (XML 쓰면)
+ │       ├─ mipmap-*/ ic_launcher.png
+ │       ├─ values/
+ │       │   ├─ strings.xml
+ │       │   └─ colors.xml
+ │       └─ xml/
+ │           └─ file_paths.xml (필요 시)
+ └─ proguard-rules.pro

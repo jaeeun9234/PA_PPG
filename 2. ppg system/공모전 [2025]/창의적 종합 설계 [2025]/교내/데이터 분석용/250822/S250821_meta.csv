@@ -1,0 +1,2 @@
+session_id,subject_id,date_iso,operator,cuff_arm,target_pressure_mmHg,occlusion_duration_s,sampling_rate_hz,notes
+S250821_173820,P001,2025-08-21,,R,,300,115200,

@@ -1,0 +1,6 @@
+﻿,DeltaTD_ms,DeltaTD_ms,DeltaTD_ms,PAD_ms,PAD_ms,PAD_ms,AUSPR,AUSPR,AUSPR,HSI,HSI,HSI,AmpRatio_norm,AmpRatio_norm,AmpRatio_norm
+,mean,std,count,mean,std,count,mean,std,count,mean,std,count,mean,std,count
+Section,,,,,,,,,,,,,,,
+Baseline,8.649,9.976,74,5.946,11.811,74,0.969,0.264,74,0.774,0.633,74,1.008,0.14,69
+Pressure,30.909,41.341,11,20.0,48.166,11,1.081,0.302,11,1.391,1.414,11,2.754,3.483,11
+Recovery,13.529,16.369,68,-10.294,18.766,68,0.876,0.359,68,1.442,0.87,68,0.829,0.604,68

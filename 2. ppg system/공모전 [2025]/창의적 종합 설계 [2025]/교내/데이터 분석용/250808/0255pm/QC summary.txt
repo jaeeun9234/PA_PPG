@@ -1,0 +1,9 @@
+=== QC SUMMARY ===
+Matched events  11
+Expected beats  33.8
+Match rate      32.5%
+Median Δ (ms)   0.0
+IQR (ms)        5.0
+Avg BPM1        67.8
+Avg BPM2        66.3
+Filters         BPM1-BPM2≤8.0, amp≤×4.0, Δ≤200.0

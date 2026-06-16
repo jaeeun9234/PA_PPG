@@ -1,0 +1,6 @@
+config.json
+raw_data/
+graphs/
+resampled/
+.DS_Store
+__pycache__/

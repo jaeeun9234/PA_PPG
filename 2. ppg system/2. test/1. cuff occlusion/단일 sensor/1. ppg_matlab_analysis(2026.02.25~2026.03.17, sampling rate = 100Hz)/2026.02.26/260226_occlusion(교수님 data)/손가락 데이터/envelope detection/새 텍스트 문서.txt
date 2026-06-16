@@ -1,0 +1,3 @@
+ir / red : bandpass(0.7-4Hz) 각각 2번씩 진행
+
+envelope detect : 100개 sample 단위 , peak 기준 detect

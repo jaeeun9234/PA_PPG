@@ -1,0 +1,16 @@
+- PPG
+	trial1 (O)
+	trial2 (X)
+	trial3 (X)
+
+- PPG+PA
+	trial1 : (X)
+		breath hold : 96까지 감소
+		breath hold release : spo2_valid 0 많음 -> spo2_valid 1 구간에서 spo2 86까지 감소 -> spo2_valid 0 -> spo2_valid 1 에서 spo2 94까지 증가
+	trial2 : 
+		baseline ~ breath hold : spo2 변화 거의 X (98~100 사이)
+		breath hold release : spo2 100 -> spo2_valid 0 많아짐 -> spo2 97까지 감소 -> spo2 99까지 증가
+	trial3 :
+		baseline ~ breath hold : spo2 변화 거의 X (97~100 사이)
+		breath hold release : spo2 100 -> spo2_valid 0 많아짐(trial2 보다는 적게 발생) -> spo2 96까지 감소 -> 100까지 증가 -> 97까지 감소
+		

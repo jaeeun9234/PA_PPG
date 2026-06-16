@@ -1,0 +1,25 @@
+ui/: 화면/컴포저블(홈·스팟·연속). 서비스 시작/중지, 진행 상태 표시.
+
+service/MeasureService.kt: 측정 세션 엔진(핵심).
+
+BLE 연결/구독 → 수신라인 처리 → CSV 기록 → Firestore 배치 업로드 → (연속 모드 시) 파일 회전.
+
+SessionConfig(mode=SPOT|CONTINUOUS, durationSec, csvRotateMinutes, batchSize…)
+
+service/receivers/MeasureAlarmReceiver.kt: AlarmManager로 스팟 측정 예약 → 서비스 시작.
+
+ble/: GATT 스캔/연결/특성 UUID 관리, Notify 수신, ppg/cmd 쓰기, 파싱.
+
+data/local/CsvWriter.kt: MediaStore Download/CareBand/에 헤더 + 버퍼링 + flush + close.
+
+data/remote/FirestoreUploader.kt: 100~300개 단위 배치 업로드(+ 실패 시 Room/WorkManager 재시도).
+
+data/repo/MeasureRepository.kt: 서비스에서 단일 인터페이스로 로컬/원격 호출.
+
+domain/MotionFilter*.kt: 모션 억제 전략 클래스(PPG-only → IMU 기반으로 교체 가능).
+
+work/UploadWorker.kt: 네트워크 복구 시 미전송 샘플/CSV 업로드.
+
+util/: 시간 포맷, 권한 요청, 공통 Result 등.
+
+di/: (선택) Hilt로 의존성 주입.

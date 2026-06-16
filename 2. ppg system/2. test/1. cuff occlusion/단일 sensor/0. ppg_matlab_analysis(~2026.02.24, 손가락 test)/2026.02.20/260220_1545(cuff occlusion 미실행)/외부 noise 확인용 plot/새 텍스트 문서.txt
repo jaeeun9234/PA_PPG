@@ -1,0 +1,3 @@
+[ideal]
+AC : pulsatile ppg 파형
+DC : 천천히 변하는 baseline
